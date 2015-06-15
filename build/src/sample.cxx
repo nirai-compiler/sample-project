@@ -2,13 +2,13 @@
 #include <datagram.h>
 #include <datagramIterator.h>
 
-string rc4(const char* data, const char* key, int ds, int ks);
+int AES_decrypt(unsigned char* data, int size, unsigned char* key,
+                unsigned char* iv, unsigned char* plaintext);
 
 const char* header = "SAMPLE";
 const int header_size = 6;
 
-const char* key = "ExampleKey123456";
-const int key_size = 16;
+unsigned char key[] = "ExampleKey123456";
 
 int niraicall_onPreStart(int argc, char* argv[])
 {
@@ -45,11 +45,12 @@ int niraicall_onLoadGameData()
     gd.close();
 
     std::string rawdata = ss.str();
-    std::string decrypted_data = rc4(rawdata.c_str(), key, rawdata.size(),
-                                     key_size);
-    
+    unsigned char* decrypted_data = new unsigned char[rawdata.size()];
+    unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int decsize = AES_decrypt((unsigned char*)rawdata.c_str(), rawdata.size(), key, iv, decrypted_data); // Assumes no error  
+        
     // Read
-    Datagram dg(decrypted_data);
+    Datagram dg(decrypted_data, decsize);
     DatagramIterator dgi(dg);
 
     unsigned int num_modules = dgi.get_uint32();
@@ -83,6 +84,8 @@ int niraicall_onLoadGameData()
         std::cerr << "Corrupted data!" << std::endl;
         return 1;
     }
+    
+    delete[] decrypted_data;
 
     memset(&fzns[num_modules], 0, sizeof(_frozen));
     PyImport_FrozenModules = fzns;

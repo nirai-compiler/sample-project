@@ -48,7 +48,7 @@ class SamplePackager(NiraiPackager):
     def generate_niraidata(self):
         print 'Generating niraidata'
 
-        config = self.get_file_contents('config.prc', 16)
+        config = self.get_file_contents('config.prc', True)
         niraidata = 'CONFIG = %r' % config
         self.add_module('niraidata', niraidata, compile=True)
 
@@ -81,8 +81,10 @@ class SamplePackager(NiraiPackager):
             dg.appendData(data)
 
         data = dg.getMessage()
-        rc4.rc4_setkey('ExampleKey123456')
-        return rc4.rc4(data)
+        
+        iv = '\0' * 16
+        key = 'ExampleKey123456'
+        return aes.encrypt(data, key, iv)
         
 if args.compile_cxx:
     compiler = NiraiCompiler('sample.exe')

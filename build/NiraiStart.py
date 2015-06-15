@@ -1,13 +1,12 @@
 from panda3d.core import *
-import rc4
+import aes
 
 import niraidata
 
 # Config
 prc = niraidata.CONFIG
-key, prc = prc[:16], prc[16:]
-rc4.rc4_setkey(key)
-prc = rc4.rc4(prc)
+iv, key, prc = prc[:16], prc[16:32], prc[32:]
+prc = aes.decrypt(prc, key, iv)
 
 for line in prc.split('\n'):
     line = line.strip()
