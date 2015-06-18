@@ -46,7 +46,7 @@ int niraicall_onLoadGameData()
     std::string rawdata = ss.str();
     unsigned char* decrypted_data = new unsigned char[rawdata.size()];
     int decsize = AES_decrypt((unsigned char*)rawdata.c_str(), rawdata.size(), key, iv, decrypted_data); // Assumes no error
-        
+
     // Read
     Datagram dg(decrypted_data, decsize);
     DatagramIterator dgi(dg);
@@ -82,7 +82,7 @@ int niraicall_onLoadGameData()
         std::cerr << "Corrupted data!" << std::endl;
         return 1;
     }
-    
+
     delete[] decrypted_data;
 
     memset(&fzns[num_modules], 0, sizeof(_frozen));

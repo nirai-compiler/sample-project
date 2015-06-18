@@ -32,7 +32,7 @@ def niraicall_obfuscate(code):
     # This way we make sure both obfuscated and non-obfuscated code work.
     if len(code) % 4:
         return False, None
-        
+
     # There are several ways to obfuscate it
     # For this example, we'll invert the string
     return True, code[::-1]
@@ -46,7 +46,7 @@ class SamplePackager(NiraiPackager):
     def __init__(self, outfile):
         NiraiPackager.__init__(self, outfile)
         self.__manglebase = self.get_mangle_base(self.BASEDIR)
-        
+
         self.add_panda3d_dirs()
         self.add_default_lib()
         self.add_directory(self.BASEDIR, mangler=self.__mangler)
@@ -56,7 +56,7 @@ class SamplePackager(NiraiPackager):
         # The file is not included if it returns an empty string.
 
         return name[self.__manglebase:].strip('.')
-        
+
     def generate_niraidata(self):
         print 'Generating niraidata'
 
@@ -67,21 +67,21 @@ class SamplePackager(NiraiPackager):
     def process_modules(self):
         '''
         This method is called when it's time to write the output.
-        
+
         For sample.nri, we use an encrypted datagram.
         The datagram is read by sample.cxx, which populates Python frozen array.
-        
+
         Datagram format:
-        
+
         uint32 numModules
         for each module:
             string name
             int32 size *
             data(abs(size))
-            
+
         * Negative size means the file was an __init__
         '''
-        
+
         dg = Datagram()
         dg.addUint32(len(self.modules))
 
@@ -93,11 +93,11 @@ class SamplePackager(NiraiPackager):
             dg.appendData(data)
 
         data = dg.getMessage()
-        
+
         iv = '\0' * 16
         key = 'ExampleKey123456'
         return aes.encrypt(data, key, iv)
-        
+
 if args.compile_cxx:
     compiler = NiraiCompiler('sample.exe')
     compiler.add_nirai_files()
