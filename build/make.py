@@ -27,6 +27,18 @@ parser.add_argument('--models', '-m', action='store_true',
                     help='Pack models.mf.')
 args = parser.parse_args()
 
+def niraicall_obfuscate(code):
+    # We'll obfuscate if len(code) % 4 == 0
+    # This way we make sure both obfuscated and non-obfuscated code work.
+    if len(code) % 4:
+        return False, None
+        
+    # There are several ways to obfuscate it
+    # For this example, we'll invert the string
+    return True, code[::-1]
+
+niraimarshal.niraicall_obfuscate = niraicall_obfuscate
+
 class SamplePackager(NiraiPackager):
     HEADER = 'SAMPLE'
     BASEDIR = '..' + os.sep

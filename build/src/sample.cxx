@@ -1,13 +1,12 @@
 #include "nirai.h"
 #include <datagram.h>
 #include <datagramIterator.h>
-
-int AES_decrypt(unsigned char* data, int size, unsigned char* key,
-                unsigned char* iv, unsigned char* plaintext);
+#include <algorithm>
 
 const char* header = "SAMPLE";
 const int header_size = 6;
 
+unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 unsigned char key[] = "ExampleKey123456";
 
 int niraicall_onPreStart(int argc, char* argv[])
@@ -46,8 +45,7 @@ int niraicall_onLoadGameData()
 
     std::string rawdata = ss.str();
     unsigned char* decrypted_data = new unsigned char[rawdata.size()];
-    unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int decsize = AES_decrypt((unsigned char*)rawdata.c_str(), rawdata.size(), key, iv, decrypted_data); // Assumes no error  
+    int decsize = AES_decrypt((unsigned char*)rawdata.c_str(), rawdata.size(), key, iv, decrypted_data); // Assumes no error
         
     // Read
     Datagram dg(decrypted_data, decsize);
@@ -91,4 +89,11 @@ int niraicall_onLoadGameData()
     PyImport_FrozenModules = fzns;
 
     return 0;
+}
+
+extern "C" PyObject* niraicall_deobfuscate(char* code, Py_ssize_t size)
+{
+    std::string output(code, size);
+    std::reverse(output.begin(), output.end());
+    return PyString_FromStringAndSize(output.data(), size);
 }
