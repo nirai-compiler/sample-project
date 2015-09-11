@@ -113,7 +113,7 @@ if args.make_nri:
 if args.models:
     os.chdir('..')
     cmd = 'multify -cf build/built/models.mf models'
-    p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+    p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr, shell=True)
     v = p.wait()
 
     if v != 0:
