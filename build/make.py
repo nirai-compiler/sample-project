@@ -16,6 +16,7 @@ if not os.path.exists('built'):
 
 sys.path.append('../../src')
 
+from panda3d.core import Datagram
 from niraitools import *
 
 parser = argparse.ArgumentParser()
