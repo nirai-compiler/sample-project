@@ -7,6 +7,7 @@ This process consists of 3 step:
 3. Generate sample.nri, which contains the Python modules.
 '''
 
+from direct.distributed.PyDatagram import PyDatagram
 import argparse
 import sys
 import os
@@ -83,7 +84,7 @@ class SamplePackager(NiraiPackager):
         * Negative size means the file was an __init__
         '''
 
-        dg = Datagram()
+        dg = PyDatagram()
         dg.addUint32(len(self.modules))
 
         for moduleName in self.modules:
@@ -100,7 +101,16 @@ class SamplePackager(NiraiPackager):
         return aes.encrypt(data, key, iv)
 
 if args.compile_cxx:
-    compiler = NiraiCompiler('sample.exe')
+    if sys.platform == 'win32':
+        output = 'sample.exe'
+
+    elif sys.platform == 'darwin':
+        output = 'Sample\ Project'
+
+    else:
+        raise Exception('The platform "%s" in use is not supported.' % sys.platform)
+
+    compiler = NiraiCompiler(output)
     compiler.add_nirai_files()
     compiler.add_source('src/sample.cxx')
     compiler.run()
