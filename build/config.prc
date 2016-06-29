@@ -57,6 +57,7 @@ hardware-animated-vertices #f
 model-cache-dir $USER_APPDATA/Panda3D-1.10/cache
 model-cache-textures #f
 basic-shaders-only #f
+window-title Roaming Ralph
 # END PANDA3D CONFIG
 
 # Now, config for sample project
