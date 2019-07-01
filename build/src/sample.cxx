@@ -3,6 +3,8 @@
 #include <datagramIterator.h>
 #include <algorithm>
 
+using namespace std;
+
 const char* header = "SAMPLE";
 const int header_size = 6;
 
